@@ -1,4 +1,4 @@
-import Process_Anal
+from Process_Anal import *
 
 def get_finish_time(terminated_queue):
     finish_time = terminated_queue.array[0].termination_time
