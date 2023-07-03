@@ -1,4 +1,4 @@
-from process import Process
+from Process import Process
 
 # Queue class
 class Queue:
@@ -56,12 +56,12 @@ def sort_queue(queue):
 def print_queue(queue):
     print("\nProcesses in the queue:")
     for i in range(queue.size):
-        print_process(queue.array[i])
+        Process.print_process(queue.array[i])
 
 def copy_queue(queue):
     new_queue = create_new_queue(queue.capacity)
     for i in range(queue.size):
-        enqueue(new_queue, copy_process(queue.array[i]))
+        enqueue(new_queue, Process.copy_process(queue.array[i]))
     return new_queue
 
 def get_process_from_queue(process, queue):
