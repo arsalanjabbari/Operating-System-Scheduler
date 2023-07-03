@@ -91,6 +91,7 @@ def get_process_with_minimum_CPU_burst_time(queue):
             (process.CPU_burst_time_1 == 0 and queue.array[i].CPU_burst_time_1 == 0 and
              queue.array[i].CPU_burst_time_2 < process.CPU_burst_time_2)):
 
+
             process = queue.array[i]
     return process
 
