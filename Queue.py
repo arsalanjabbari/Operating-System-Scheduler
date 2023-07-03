@@ -82,12 +82,15 @@ def remove_process(queue, process):
 def get_process_with_minimum_CPU_burst_time(queue):
     process = queue.array[0]
     for i in range(1, queue.size):
-        if (
-            (process.CPU_burst_time_1 != 0 and queue.array[i].CPU_burst_time_1 != 0 and queue.array[i].CPU_burst_time_1 < process.CPU_burst_time_1) or
-            (process.CPU_burst_time_1 == 0 and queue.array[i].CPU_burst_time_1 != 0 and queue.array[i].CPU_burst_time_1 < process.CPU_burst_time_2) or
-            (process.CPU_burst_time_1 != 0 and queue.array[i].CPU_burst_time_1 == 0 and queue.array[i].CPU_burst_time_2 < process.CPU_burst_time_1) or
-            (process.CPU_burst_time_1 == 0 and queue.array[i].CPU_burst_time_1 == 0 and queue.array[i].CPU_burst_time_2 < process.CPU_burst_time_2)
-        ):
+        if ((process.CPU_burst_time_1 != 0 and queue.array[i].CPU_burst_time_1 != 0 and
+             queue.array[i].CPU_burst_time_1 < process.CPU_burst_time_1) or
+            (process.CPU_burst_time_1 == 0 and queue.array[i].CPU_burst_time_1 != 0 and
+             queue.array[i].CPU_burst_time_1 < process.CPU_burst_time_2) or
+            (process.CPU_burst_time_1 != 0 and queue.array[i].CPU_burst_time_1 == 0 and
+             queue.array[i].CPU_burst_time_2 < process.CPU_burst_time_1) or
+            (process.CPU_burst_time_1 == 0 and queue.array[i].CPU_burst_time_1 == 0 and
+             queue.array[i].CPU_burst_time_2 < process.CPU_burst_time_2)):
+
             process = queue.array[i]
     return process
 
