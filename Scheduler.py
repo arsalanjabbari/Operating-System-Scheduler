@@ -1,51 +1,12 @@
-import os
-
-# First Come, First Served (FCFS) Scheduling Algorithm in Operating System
 from Queue import Queue
+from Test_Section import create_directory, create_file
 
 
 def FCFS_scheduling_algorithm(job_queue):
-    def create_directory(directory):
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-
-    def create_file(directory, filename, extension):
-        file_path = os.path.join(directory, filename + extension)
-        return open(file_path, "w")
-
-    def copy_queue(queue):
-        return copy_queue(queue)
-
-    def is_full(queue):
-        return len(queue) == queue.capacity
-
-    def is_empty(queue):
-        return len(queue) == 0
-
-    def front(queue):
-        return queue[0]
-
-    def rear(queue):
-        return queue[-1]
-
-    def enqueue(queue, item):
-        queue.append(item)
-
-    def dequeue(queue):
-        return queue.pop(0)
-
-    def analyze_algorithm(job_queue_copy, terminated_queue, output_file):
-        # Algorithm analysis logic
-        pass
-
-    def analyze_processes(job_queue_copy, terminated_queue, output_file):
-        # Process analysis logic
-        pass
-
     create_directory("./output/FCFS")
-    algorithm_procedure_output_file = create_file("./output/FCFS/", "FCFS - Algorithm Procedure", ".txt")
-    algorithm_analysis_output_file = create_file("./output/FCFS/", "FCFS - Algorithm Analysis", ".txt")
-    processes_analysis_output_file = create_file("./output/FCFS/", "FCFS - Processes Analysis", ".txt")
+    algorithm_procedure_output_file = create_file("./output/FCFS/", "FCFS - Algorithm Procedure", ".log")
+    algorithm_analysis_output_file = create_file("./output/FCFS/", "FCFS - Algorithm Analysis", ".log")
+    processes_analysis_output_file = create_file("./output/FCFS/", "FCFS - Processes Analysis", ".log")
 
     job_queue_copy = Queue.copy_queue(job_queue)
     ready_queue = Queue(job_queue.capacity)
@@ -60,7 +21,7 @@ def FCFS_scheduling_algorithm(job_queue):
     while not terminated_queue.is_full():
         algorithm_procedure_output_file.write("Time = {}-{}:\n".format(current_time, current_time + 1))
 
-        if not job_queue.is_empty() and front(job_queue).arrival_time <= current_time:
+        if not job_queue.is_empty() and job_queue.front().arrival_time <= current_time:
             ready_queue.enqueue(job_queue.dequeue())
             algorithm_procedure_output_file.write("\tProcess-{} Moved From Job-Queue to Ready-Queue."
                                                   "\n".format(ready_queue.rear().process_id))
@@ -114,7 +75,7 @@ def FCFS_scheduling_algorithm(job_queue):
                         running_process = None
                         algorithm_procedure_output_file.write("\tProcess-{} Moved From Running-State to Waiting-Queue"
                                                               "to Execute Its IO Burst.\n".format(waiting_queue.rear()
-                                                                                                    .process_id))
+                                                                                                  .process_id))
 
         current_time += 1
 
