@@ -3,7 +3,6 @@ from Process_Analyze import analyze_processes
 from Queue import *
 from Test_Section import create_directory, create_file
 
-
 def FCFS_scheduling_algorithm(job_queue):
 
     create_directory("./output/FCFS")
@@ -81,7 +80,6 @@ def FCFS_scheduling_algorithm(job_queue):
 
     algorithm_analysis_output_file.close()
     processes_analysis_output_file.close()
-#
 
 def RR_scheduling_algorithm(job_queue):
 
@@ -360,6 +358,33 @@ def SRTF_scheduling_algorithm(job_queue):
                             rear(ready_queue).process_id))
 
         current_time += 1
+
+    algorithm_procedure_output_file.close()
+
+    analyze_algorithm(job_queue_copy, terminated_queue, algorithm_analysis_output_file)
+    analyze_processes(job_queue_copy, terminated_queue, processes_analysis_output_file)
+
+    algorithm_analysis_output_file.close()
+    processes_analysis_output_file.close()
+
+def MLFQ_scheduling_algorithm(job_queue):
+
+    create_directory("./output/MLFQ")
+    algorithm_procedure_output_file = create_file("./output/MLFQ/", "MLFQ - Algorithm Procedure", ".log")
+    algorithm_analysis_output_file = create_file("./output/MLFQ/", "MLFQ - Algorithm Analysis", ".log")
+    processes_analysis_output_file = create_file("./output/MLFQ/", "MLFQ - Processes Analysis", ".log")
+
+    job_queue_copy = copy_queue(job_queue)
+    ready_queue = Queue(job_queue.capacity)
+    running_process = None
+    waiting_queue = Queue(job_queue.capacity)
+    terminated_queue = Queue(job_queue.capacity)
+
+    current_time = 0
+    algorithm_procedure_output_file.write("*** Multi-Level-Feedback-Queue (MLFQ) Scheduling Algorithm in Operating System "
+                                          "***\n\n")
+
+
 
     algorithm_procedure_output_file.close()
 
