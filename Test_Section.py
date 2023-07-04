@@ -1,5 +1,5 @@
-from Process import Process
-from Queue import Queue
+from Process import *
+from Queue import *
 import os
 
 # create a new file in a given directory with given name and given extension
@@ -33,7 +33,7 @@ def read_processes_from_CSV_file(path):
         for line in CSV_file:
             process_id, arrival_time, CPU_burst_time_1, IO_burst_time, CPU_burst_time_2 = map(int, line.strip().split(","))
             process = Process(process_id, arrival_time, CPU_burst_time_1, CPU_burst_time_2 ,IO_burst_time)
-            Queue.enqueue(queue, process)
+            enqueue(queue, process)
 
     create_directory("./output")
 
