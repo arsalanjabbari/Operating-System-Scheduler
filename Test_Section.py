@@ -22,10 +22,9 @@ def read_processes_from_CSV_file(path):
     with open(path, "r") as CSV_file:
         CSV_file.readline()  # skip the header line
 
-        queue = Queue(len(CSV_file.readlines()))
+        queue = Queue(count_lines_in_CSV_file(CSV_file.readlines()))
         for line in CSV_file:
-            process_id, arrival_time, CPU_burst_time_1, IO_burst_time, CPU_burst_time_2 = \
-                map(int, line.strip().split(","))
+            process_id, arrival_time, CPU_burst_time_1, IO_burst_time, CPU_burst_time_2 = map(int, line.strip().split(","))
             queue.enqueue((process_id, arrival_time, CPU_burst_time_1, IO_burst_time, CPU_burst_time_2))
 
     create_directory("./output")
