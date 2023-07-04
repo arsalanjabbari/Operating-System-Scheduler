@@ -7,7 +7,7 @@ def main():
     sort_queue_at(job_queue)
     FCFS_scheduling_algorithm(copy_queue(job_queue))
     RR_scheduling_algorithm(copy_queue(job_queue))
-    # SJF_scheduling_algorithm(job_queue.copy())
+    SPN_scheduling_algorithm(job_queue.copy())
     # SRTF_scheduling_algorithm(job_queue.copy())
     # MLFQ_scheduling_algorithm(job_queue.copy())
 
