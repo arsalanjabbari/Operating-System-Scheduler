@@ -8,7 +8,7 @@ def main():
     FCFS_scheduling_algorithm(copy_queue(job_queue))
     RR_scheduling_algorithm(copy_queue(job_queue))
     SPN_scheduling_algorithm(copy_queue(job_queue))
-    # SRTF_scheduling_algorithm(job_queue.copy())
+    SRTF_scheduling_algorithm(copy_queue(job_queue))
     # MLFQ_scheduling_algorithm(job_queue.copy())
 
 if __name__ == "__main__":
