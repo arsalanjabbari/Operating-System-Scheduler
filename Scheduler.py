@@ -190,7 +190,7 @@ def RR_scheduling_algorithm(job_queue):
 
 def SPN_scheduling_algorithm(job_queue):
 
-    create_directory("./output/RR")
+    create_directory("./output/SPN")
     algorithm_procedure_output_file = create_file("./output/SPN/", "SPN - Algorithm Procedure", ".log")
     algorithm_analysis_output_file = create_file("./output/SPN/", "SPN - Algorithm Analysis", ".log")
     processes_analysis_output_file = create_file("./output/SPN/", "SPN - Processes Analysis", ".log")
@@ -271,3 +271,20 @@ def SPN_scheduling_algorithm(job_queue):
 
     algorithm_analysis_output_file.close()
     processes_analysis_output_file.close()
+
+def SPN_scheduling_algorithm(job_queue):
+
+    create_directory("./output/SPN")
+    algorithm_procedure_output_file = create_file("./output/SPN/", "SPN - Algorithm Procedure", ".log")
+    algorithm_analysis_output_file = create_file("./output/SPN/", "SPN - Algorithm Analysis", ".log")
+    processes_analysis_output_file = create_file("./output/SPN/", "SPN - Processes Analysis", ".log")
+
+    job_queue_copy = copy_queue(job_queue)
+    ready_queue = Queue(job_queue.capacity)
+    running_process = None
+    waiting_queue = Queue(job_queue.capacity)
+    terminated_queue = Queue(job_queue.capacity)
+
+    current_time = 0
+    algorithm_procedure_output_file.write("*** Shortest-Process-Next (SPN) Scheduling Algorithm in Operating System "
+                                          "***\n\n")
