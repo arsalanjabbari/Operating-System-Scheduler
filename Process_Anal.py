@@ -5,7 +5,8 @@ def get_process_turnaround_time(self):
 
 def get_process_waiting_time(self, job_queue):
     queue_process = Queue.get_process_from_queue(process, job_queue)
-    return get_process_turnaround_time(process) - (queue_process.CPU_burst_time_1 + queue_process.IO_burst_time + queue_process.CPU_burst_time_2)
+    return get_process_turnaround_time(process) - (queue_process.CPU_burst_time_1 + queue_process.IO_burst_time +
+                                                   queue_process.CPU_burst_time_2)
 
 def analyze_processes(job_queue, terminated_queue, output_file):
     for i in range(terminated_queue.size):

@@ -4,9 +4,9 @@ from Queue import *
 
 def main():
     job_queue = read_processes_from_CSV_file("csv.csv")
-    sort_queue(job_queue)
+    job_queue.sort_queue_at()
 
-    FCFS_scheduling_algorithm(copy_queue(job_queue))
+    FCFS_scheduling_algorithm(job_queue.copy_queue())
     # RR_scheduling_algorithm(job_queue.copy())
     # SJF_scheduling_algorithm(job_queue.copy())
     # SRTF_scheduling_algorithm(job_queue.copy())
