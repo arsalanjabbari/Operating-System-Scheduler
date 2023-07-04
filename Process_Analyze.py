@@ -17,9 +17,9 @@ def get_process_turnaround_time(selected_process):
 
 def get_process_waiting_time(selected_process, job_queue):
     return get_process_turnaround_time(selected_process) - (
-                get_process_from_queue(selected_process, job_queue).CPU_burst_time_1 +
-                get_process_from_queue(selected_process, job_queue).IO_burst_time +
-                get_process_from_queue(selected_process, job_queue).CPU_burst_time_2)
+                get_process_from_queue(job_queue, selected_process).CPU_burst_time_1 +
+                get_process_from_queue(job_queue, selected_process).IO_burst_time +
+                get_process_from_queue(job_queue, selected_process).CPU_burst_time_2)
 
 
 def analyze_processes(job_queue, terminated_queue, output_file):

@@ -4,7 +4,6 @@ from Process import copy_process
 class Queue:
 
     def __init__(self, capacity):
-        self.size = -1
         self.capacity = capacity
         self.front = 0
         self.size = 0
@@ -12,7 +11,7 @@ class Queue:
         self.array = [None] * capacity
 
 def is_full(selected_queue):
-    return selected_queue.size == selected_queue.capacity
+    return selected_queue.size+1 == selected_queue.capacity
 
 def is_empty(selected_queue):
     return selected_queue.size == 0
@@ -57,6 +56,7 @@ def sort_queue_at(selected_queue):
 
 
 def get_process_from_queue(selected_queue, selected_process):
+    print(selected_queue.size)
     for i in range(selected_queue.size):
         if selected_queue.array[i].process_id == selected_process.process_id:
             return selected_queue.array[i]

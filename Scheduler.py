@@ -18,7 +18,6 @@ def FCFS_scheduling_algorithm(job_queue):
     terminated_queue = Queue(job_queue.capacity)
 
     current_time = 0
-
     algorithm_procedure_output_file.write("*** First Come, First Serve (FCFS) Scheduling Algorithm in Operating System "
                                           "***\n\n")
     while not is_full(terminated_queue):
