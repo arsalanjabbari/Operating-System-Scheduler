@@ -20,12 +20,10 @@ def is_empty(selected_queue):
 def enqueue(selected_queue, enqueuing_process):
     if is_full(selected_queue):
         return None
-    # print(selected_queue.capacity)
-    # print(selected_queue.rear)
+
     selected_queue.rear = (selected_queue.rear + 1) % selected_queue.capacity
-    # print(selected_queue.rear)
-    # print(enqueuing_process)
-    selected_queue.array[selected_queue.rear+1] = enqueuing_process
+
+    selected_queue.array[selected_queue.rear] = enqueuing_process
     selected_queue.size += 1
 
 def dequeue(selected_queue):

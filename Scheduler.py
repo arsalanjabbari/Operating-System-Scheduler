@@ -1,6 +1,6 @@
 from Algo_Anal import analyze_algorithm
 from Process_Anal import analyze_processes
-from Queue import Queue
+from Queue import *
 from Test_Section import create_directory, create_file
 
 
