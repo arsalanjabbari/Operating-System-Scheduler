@@ -94,10 +94,8 @@ def remove_process_with_minimum_CPU_burst_time(selected_queue):
     return wanted_process
 
 def copy_queue(selected_queue):
-    print_queue(selected_queue)
     new_queue = Queue(selected_queue.capacity)
     for i in range(selected_queue.size):
-        print(1)
         enqueue(new_queue, copy_process(selected_queue.array[i]))
     return new_queue
 
