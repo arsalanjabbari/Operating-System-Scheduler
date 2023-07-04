@@ -1,3 +1,4 @@
+from Process import Process
 from Queue import Queue
 import os
 
@@ -11,21 +12,28 @@ def create_file(path, name, extension):
 def create_directory(path):
     os.makedirs(path, exist_ok=True)
 
-# Count the number of lines in a CSV file
+
 def count_lines_in_CSV_file(path):
-    with open(path, "r") as CSV_file:
-        lines = CSV_file.readlines()
-        return len(lines)
+    try:
+        with open(path, 'r') as file:
+            line_count = 0
+            for line in file:
+                line_count += 1
+        return line_count
+    except FileNotFoundError:
+        print(f"File '{path}' not found.")
+
 
 # Read input Processes from CSV File and return a queue of processes to be scheduled
 def read_processes_from_CSV_file(path):
     with open(path, "r") as CSV_file:
         CSV_file.readline()  # skip the header line
 
-        queue = Queue(count_lines_in_CSV_file(CSV_file.readlines()))
+        queue = Queue(count_lines_in_CSV_file(path))
         for line in CSV_file:
             process_id, arrival_time, CPU_burst_time_1, IO_burst_time, CPU_burst_time_2 = map(int, line.strip().split(","))
-            queue.enqueue((process_id, arrival_time, CPU_burst_time_1, IO_burst_time, CPU_burst_time_2))
+            process = Process(process_id, arrival_time, CPU_burst_time_1, CPU_burst_time_2 ,IO_burst_time)
+            Queue.enqueue(queue, process)
 
     create_directory("./output")
 

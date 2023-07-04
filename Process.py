@@ -15,18 +15,18 @@ class Process:
     #     process = Process(process_id, arrival_time, CPU_burst_time_1, IO_burst_time, CPU_burst_time_2)
     #     return process
 
-    def copy_process(self):
-        new_process = Process(self.process_id, self.arrival_time, self.CPU_burst_time_1, self.IO_burst_time,
-                              self.CPU_burst_time_2)
-        new_process.response_time = self.response_time
-        new_process.turn_around_time = self.turn_around_time
-        new_process.waiting_time = self.waiting_time
-        new_process.termination_time = self.termination_time
-        return new_process
+def print_process(selected_process):
+    print(f"Process ID: {selected_process.process_id} | Arrival Time: {selected_process.arrival_time} | CPU Burst Time 1: "
+          f"{selected_process.CPU_burst_time_1} | IO Burst Time: {selected_process.IO_burst_time} | CPU Burst Time 2: "
+          f"{selected_process.CPU_burst_time_2} | Response Time: {selected_process.response_time} | Turn Around Time: "
+          f"{selected_process.turn_around_time} | Waiting Time: {selected_process.waiting_time} | Termination Time: "
+          f"{selected_process.termination_time}")
 
-    def print_process(self):
-        print(f"Process ID: {self.process_id} | Arrival Time: {self.arrival_time} | CPU Burst Time 1: "
-              f"{self.CPU_burst_time_1} | IO Burst Time: {self.IO_burst_time} | CPU Burst Time 2: "
-              f"{self.CPU_burst_time_2} | Response Time: {self.response_time} | Turn Around Time: "
-              f"{self.turn_around_time} | Waiting Time: {self.waiting_time} | Termination Time: "
-              f"{self.termination_time}")
+def copy_process(selected_process):
+    new_process = Process(selected_process.process_id, selected_process.arrival_time, selected_process.CPU_burst_time_1, selected_process.IO_burst_time,
+                          selected_process.CPU_burst_time_2)
+    new_process.response_time = selected_process.response_time
+    new_process.turn_around_time = selected_process.turn_around_time
+    new_process.waiting_time = selected_process.waiting_time
+    new_process.termination_time = selected_process.termination_time
+    return new_process
