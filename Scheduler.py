@@ -23,7 +23,7 @@ def FCFS_scheduling_algorithm(job_queue):
                                           "***\n\n")
     print_queue(job_queue)
     while not is_full(terminated_queue):
-        algorithm_procedure_output_file.write("Time = {}-{}:\n".format(current_time, current_time + 1))
+        algorithm_procedure_output_file.write(f"Time = {current_time}-{current_time + 1}:\n")
 
         if not is_empty(job_queue) and front(job_queue).arrival_time <= current_time:
             enqueue(ready_queue, dequeue(job_queue))
@@ -83,6 +83,7 @@ def FCFS_scheduling_algorithm(job_queue):
                                                                                                   .process_id))
 
         current_time += 1
+
 
     algorithm_procedure_output_file.close()
 
