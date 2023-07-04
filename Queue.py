@@ -1,101 +1,100 @@
-from Process import Process
+from Process import Process as process
 
-# Queue class
 class Queue:
+
     def __init__(self, capacity):
+        self.size = -1
         self.capacity = capacity
-        self.front = self.size = 0
+        self.front = 0
+        self.size = 0
         self.rear = capacity - 1
-        self.array = [None] * capacity
+        self.array = []
 
-def create_new_queue(capacity):
-    queue = Queue(capacity)
-    return queue
+    def is_full(self):
+        return self.size == self.capacity
 
-def is_full(queue):
-    return queue.size == queue.capacity
+    def is_empty(self):
+        return self.size == 0
 
-def is_empty(queue):
-    return queue.size == 0
+    def enqueue(self, enqueuing_process):
+        if Queue.is_full(self):
+            return None
 
-def enqueue(queue, process):
-    if is_full(queue):
-        return
+        self.rear = (self.rear + 1) % self.capacity
+        self.array[self.rear] = enqueuing_process
+        self.size += 1
 
-    queue.rear = (queue.rear + 1) % queue.capacity
-    queue.array[queue.rear] = process
-    queue.size += 1
+    def dequeue(self):
+        if Queue.is_empty(self):
+            return None
 
-def dequeue(queue):
-    if is_empty(queue):
+        dequeued_process = self.array[self.front]
+        self.front = (self.front + 1) % self.capacity
+        self.size -= 1
+        return dequeued_process
+
+    def front(self):
+        if Queue.is_empty(self):
+            return None
+
+        return self.array[self.front]
+
+    def rear(self):
+        if Queue.is_empty(self):
+            return None
+
+        return self.array[self.rear]
+
+    # Sort on Arrival time
+    def sort_queue_at(self):
+        for i in range(self.size - 1):
+            for j in range(self.size - i - 1):
+                if self.array[j].arrival_time > self.array[j + 1].arrival_time:
+                    self.array[j], self.array[j + 1] = self.array[j + 1], self.array[j]
+
+    def print_queue(self):
+        print("\nProcesses in the queue:")
+        for i in range(self.size):
+            process.print_process(self.array[i])
+
+    def copy_queue(self):
+        new_queue = Queue(self.capacity)
+        for i in range(self.size):
+            Queue.enqueue(new_queue, process.copy_process(self.array[i]))
+        return new_queue
+
+    def get_process_from_queue(self, selected_process):
+        for i in range(self.size):
+            if self.array[i].process_id == selected_process.process_id:
+                return self.array[i]
         return None
 
-    process = queue.array[queue.front]
-    queue.front = (queue.front + 1) % queue.capacity
-    queue.size -= 1
-    return process
+    def remove_process(self, selected_process):
+        for i in range(self.size):
+            if self.array[i] == selected_process:
+                for j in range(i, self.size - 1):
+                    self.array[j] = self.array[j + 1]
+                self.size -= 1
+                break
+        self.rear -= 1
 
-def front(queue):
-    if is_empty(queue):
-        return None
-
-    return queue.array[queue.front]
-
-def rear(queue):
-    if is_empty(queue):
-        return None
-
-    return queue.array[queue.rear]
-
-def sort_queue(queue):
-    for i in range(queue.size - 1):
-        for j in range(queue.size - i - 1):
-            if queue.array[j].arrival_time > queue.array[j + 1].arrival_time:
-                queue.array[j], queue.array[j + 1] = queue.array[j + 1], queue.array[j]
-
-def print_queue(queue):
-    print("\nProcesses in the queue:")
-    for i in range(queue.size):
-        Process.print_process(queue.array[i])
-
-def copy_queue(queue):
-    new_queue = create_new_queue(queue.capacity)
-    for i in range(queue.size):
-        enqueue(new_queue, Process.copy_process(queue.array[i]))
-    return new_queue
-
-def get_process_from_queue(process, queue):
-    for i in range(queue.size):
-        if queue.array[i].process_id == process.process_id:
-            return queue.array[i]
-    return None
-
-def remove_process(queue, process):
-    for i in range(queue.size):
-        if queue.array[i] == process:
-            for j in range(i, queue.size - 1):
-                queue.array[j] = queue.array[j + 1]
-            queue.size -= 1
-            break
-    queue.rear -= 1
-
-def get_process_with_minimum_CPU_burst_time(queue):
-    process = queue.array[0]
-    for i in range(1, queue.size):
-        if ((process.CPU_burst_time_1 != 0 and queue.array[i].CPU_burst_time_1 != 0 and
-             queue.array[i].CPU_burst_time_1 < process.CPU_burst_time_1) or
-            (process.CPU_burst_time_1 == 0 and queue.array[i].CPU_burst_time_1 != 0 and
-             queue.array[i].CPU_burst_time_1 < process.CPU_burst_time_2) or
-            (process.CPU_burst_time_1 != 0 and queue.array[i].CPU_burst_time_1 == 0 and
-             queue.array[i].CPU_burst_time_2 < process.CPU_burst_time_1) or
-            (process.CPU_burst_time_1 == 0 and queue.array[i].CPU_burst_time_1 == 0 and
-             queue.array[i].CPU_burst_time_2 < process.CPU_burst_time_2)):
+    def get_process_with_minimum_CPU_burst_time(self):
+        wanted_process = self.array[0]
+        for i in range(1, self.size):
+            if ((wanted_process.CPU_burst_time_1 != 0 and self.array[i].CPU_burst_time_1 != 0 and
+                 self.array[i].CPU_burst_time_1 < wanted_process.CPU_burst_time_1) or
+                (wanted_process.CPU_burst_time_1 == 0 and self.array[i].CPU_burst_time_1 != 0 and
+                 self.array[i].CPU_burst_time_1 < wanted_process.CPU_burst_time_2) or
+                (wanted_process.CPU_burst_time_1 != 0 and self.array[i].CPU_burst_time_1 == 0 and
+                 self.array[i].CPU_burst_time_2 < wanted_process.CPU_burst_time_1) or
+                (wanted_process.CPU_burst_time_1 == 0 and self.array[i].CPU_burst_time_1 == 0 and
+                 self.array[i].CPU_burst_time_2 < wanted_process.CPU_burst_time_2)):
 
 
-            process = queue.array[i]
-    return process
+                wanted_process = self.array[i]
+        return wanted_process
 
-def remove_process_with_minimum_CPU_burst_time(queue):
-    process = get_process_with_minimum_CPU_burst_time(queue)
-    remove_process(queue, process)
-    return process
+    def remove_process_with_minimum_CPU_burst_time(self):
+        wanted_process = Queue.get_process_with_minimum_CPU_burst_time(self)
+        Queue.remove_process(self, wanted_process)
+        return wanted_process

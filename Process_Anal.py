@@ -1,9 +1,9 @@
 from Queue import Queue
 
-def get_process_turnaround_time(process):
+def get_process_turnaround_time(self):
     return process.termination_time - process.arrival_time
 
-def get_process_waiting_time(process, job_queue):
+def get_process_waiting_time(self, job_queue):
     queue_process = Queue.get_process_from_queue(process, job_queue)
     return get_process_turnaround_time(process) - (queue_process.CPU_burst_time_1 + queue_process.IO_burst_time + queue_process.CPU_burst_time_2)
 
