@@ -1,3 +1,5 @@
+from Algo_Anal import analyze_algorithm
+from Process_Anal import analyze_processes
 from Queue import Queue
 from Test_Section import create_directory, create_file
 
@@ -57,9 +59,10 @@ def FCFS_scheduling_algorithm(job_queue):
                         running_process.termination_time = current_time + 1
                         running_process.turn_around_time = running_process.termination_time - running_process \
                             .arrival_time
-                        running_process.waiting_time = running_process.turn_around_time - \
-                                                       (running_process.CPU_burst_time_1 + running_process.IO_burst_time
-                                                        + running_process.CPU_burst_time_2)
+                        running_process.waiting_time = \
+                            running_process.turn_around_time - \
+                            (running_process.CPU_burst_time_1 +
+                             running_process.IO_burst_time + running_process.CPU_burst_time_2)
                         running_process = None
                         algorithm_procedure_output_file.write("\tProcess-{} Was Terminated (Moved From Running-State to"
                                                               " Terminated-Queue).\n"
