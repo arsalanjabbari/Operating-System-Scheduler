@@ -9,7 +9,8 @@ def main():
     RR_scheduling_algorithm(copy_queue(job_queue))
     SPN_scheduling_algorithm(copy_queue(job_queue))
     SRTF_scheduling_algorithm(copy_queue(job_queue))
-    # MLFQ_scheduling_algorithm(job_queue.copy())
+    MLFQ_scheduling_algorithm(copy_queue(job_queue))
+    HRRN_scheduling_algorithm(copy_queue(job_queue))
 
 if __name__ == "__main__":
     main()
