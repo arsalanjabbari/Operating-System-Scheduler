@@ -364,6 +364,7 @@ def SRTF_scheduling_algorithm(job_queue):
 
 
 def MLFQ_scheduling_algorithm(job_queue):
+
     create_directory("./output/MLFQ")
     algorithm_procedure_output_file = create_file("./output/MLFQ/", "MLFQ - Algorithm Procedure", ".log")
     algorithm_analysis_output_file = create_file("./output/MLFQ/", "MLFQ - Algorithm Analysis", ".log")
@@ -399,24 +400,24 @@ def MLFQ_scheduling_algorithm(job_queue):
 
         if not is_empty(ready_queue) and running_process is None:
             running_process = dequeue(ready_queue)
-            running_process_previous_level = 1
-            running_elapsed_time = 0
+            process_previous_running_level = 1
+            temp_elapsed_time = 0
             if running_process.response_time == -1:
                 running_process.response_time = current_time
             algorithm_procedure_output_file.write(
                 "\tProcess-{} Moved From Ready-Queue Level 1 to Running-State.\n".format(running_process.process_id))
         elif not is_empty(ready_queue_level_2) and running_process is None:
             running_process = dequeue(ready_queue_level_2)
-            running_process_previous_level = 2
-            running_elapsed_time = 0
+            process_previous_running_level = 2
+            temp_elapsed_time = 0
             if running_process.response_time == -1:
                 running_process.response_time = current_time
             algorithm_procedure_output_file.write(
                 "\tProcess-{} Moved From Ready-Queue Level 2 to Running-State.\n".format(running_process.process_id))
         elif not is_empty(ready_queue_level_3) and running_process is None:
             running_process = dequeue(ready_queue_level_3)
-            running_process_previous_level = 3
-            running_elapsed_time = 0
+            process_previous_running_level = 3
+            temp_elapsed_time = 0
             if running_process.response_time == -1:
                 running_process.response_time = current_time
             algorithm_procedure_output_file.write(
@@ -438,7 +439,7 @@ def MLFQ_scheduling_algorithm(job_queue):
             if running_process.CPU_burst_time_1 == 0:
                 if running_process.IO_burst_time == 0 and running_process.CPU_burst_time_2 != 0:
                     running_process.CPU_burst_time_2 -= 1
-                    running_elapsed_time += 1
+                    temp_elapsed_time += 1
                     algorithm_procedure_output_file.write(
                         "\tProcess-{}'s Second CPU Burst Was Executed for 1 Second (Remaining Second CPU Burst Time = {}).\n".format(
                             running_process.process_id, running_process.CPU_burst_time_2))
@@ -453,21 +454,21 @@ def MLFQ_scheduling_algorithm(job_queue):
                         algorithm_procedure_output_file.write(
                             "\tProcess-{} Was Terminated (Moved From Running-State to Terminated-Queue).\n".format(
                                 rear(terminated_queue).process_id))
-                    elif running_process_previous_level == 1 and running_elapsed_time == time_quantum_level_1:
+                    elif process_previous_running_level == 1 and temp_elapsed_time == time_quantum_level_1:
                         enqueue(ready_queue_level_2, running_process)
                         running_process = None
                         algorithm_procedure_output_file.write(
                             "\tProcess-{} Was Preempted (Moved From Running-State to Ready-Queue Level 2).\n".format(
                                 rear(ready_queue_level_2).process_id))
-                    elif running_process_previous_level == 2 and running_elapsed_time == time_quantum_level_2:
+                    elif process_previous_running_level == 2 and temp_elapsed_time == time_quantum_level_2:
                         enqueue(ready_queue_level_3, running_process)
-                        running_elapsed_time = 0
+                        temp_elapsed_time = 0
                         algorithm_procedure_output_file.write(
                             "\tProcess-{} Was Preempted (Moved From Running-State to Ready-Queue Level 3).\n".format(
                                 rear(ready_queue_level_3).process_id))
             else:
                 running_process.CPU_burst_time_1 -= 1
-                running_elapsed_time += 1
+                temp_elapsed_time += 1
                 algorithm_procedure_output_file.write(
                     "\tProcess-{}'s First CPU Burst Was Executed for 1 Second (Remaining First CPU Burst Time = {}).\n".format(
                         running_process.process_id, running_process.CPU_burst_time_1))
@@ -478,13 +479,13 @@ def MLFQ_scheduling_algorithm(job_queue):
                     algorithm_procedure_output_file.write(
                         "\tProcess-{} Moved From Running-State to Waiting-Queue to Execute Its IO Burst.\n".format(
                             rear(waiting_queue).process_id))
-                elif running_process_previous_level == 1 and running_elapsed_time == time_quantum_level_1:
+                elif process_previous_running_level == 1 and temp_elapsed_time == time_quantum_level_1:
                     enqueue(ready_queue_level_2, running_process)
                     running_process = None
                     algorithm_procedure_output_file.write(
                         "\tProcess-{} Was Preempted (Moved From Running-State to Ready-Queue Level 2).\n".format(
                             rear(ready_queue_level_2).process_id))
-                elif running_process_previous_level == 2 and running_elapsed_time == time_quantum_level_2:
+                elif process_previous_running_level == 2 and temp_elapsed_time == time_quantum_level_2:
                     enqueue(ready_queue_level_3, running_process)
                     running_process = None
                     algorithm_procedure_output_file.write(
@@ -501,6 +502,7 @@ def MLFQ_scheduling_algorithm(job_queue):
 
 
 def HRRN_scheduling_algorithm(job_queue):
+
     create_directory("./output/HRRN")
     algorithm_procedure_output_file = create_file("./output/HRRN/", "HRRN - Algorithm Procedure", ".log")
     algorithm_analysis_output_file = create_file("./output/HRRN/", "HRRN - Algorithm Analysis", ".log")
