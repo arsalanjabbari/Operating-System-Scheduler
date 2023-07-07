@@ -45,7 +45,7 @@ def get_average_response_time(terminated_queue):
         average_response_time += terminated_queue.array[i].response_time
     return average_response_time / terminated_queue.size
 
-def analyze_algorithm(job_queue, terminated_queue, output_file):
+def analyze_algorithm_on_the_queue(job_queue, terminated_queue, output_file):
     CPU_execution_time = get_CPU_execution_time(job_queue)
     CPU_idle_time = get_CPU_idle_time(job_queue, terminated_queue)
     CPU_utilization = get_CPU_utilization_percent(job_queue, terminated_queue)
