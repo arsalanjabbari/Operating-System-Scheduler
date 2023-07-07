@@ -7,7 +7,6 @@ from Queue import *
 
 job_queue = None  # Global variable to hold the job queue
 
-
 def run_algorithm(algorithm_name):
     if job_queue is None:
         messagebox.showwarning("Warning", "Please browse a CSV file before running the algorithm.")
@@ -27,7 +26,6 @@ def run_algorithm(algorithm_name):
 
         messagebox.showinfo("Success", "Algorithm '{}' completed successfully; You can see results in "
                                        "./Output/{}.".format(algorithm_name, algorithm_name))
-
 
 def main():
     def on_algorithm_selected():
@@ -75,7 +73,6 @@ def main():
     run_button.pack(pady=10)
 
     root.mainloop()
-
 
 if __name__ == "__main__":
     main()
