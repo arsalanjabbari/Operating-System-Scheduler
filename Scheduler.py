@@ -535,7 +535,7 @@ def HRRN_scheduling_algorithm(job_queue):
             if running_process.response_time == -1:
                 running_process.response_time = current_time
             algorithm_procedure_output_file.write("\tProcess-{} Moved From Ready-Queue to Running-State.\n".format(running_process.process_id))
-            remove_process(ready_queue, running_process)
+            remove_process_from_queue(ready_queue, running_process)
 
         if running_process is not None:
             running_process.burst_time -= 1

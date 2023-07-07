@@ -25,7 +25,7 @@ def run_algorithm(algorithm_name):
             HRRN_scheduling_algorithm(copy_queue(job_queue))
 
         messagebox.showinfo("Success", "Algorithm '{}' completed successfully; You can see results in "
-                                       "./Output/{}.".format(algorithm_name, algorithm_name))
+                                       "./output/{}.".format(algorithm_name, algorithm_name))
 
 def main():
     def on_algorithm_selected():
@@ -37,7 +37,7 @@ def main():
         if filename:
             if filename.endswith('.csv'):
                 global job_queue  # Declare job_queue as global
-                job_queue = read_processes_from_CSV_file(filename)
+                job_queue = read_processes_from_CSV_file_make_them_queue(filename)
                 sort_queue_at(job_queue)
                 status_label.config(text="Selected file: " + filename)  # Update the status label
             else:
