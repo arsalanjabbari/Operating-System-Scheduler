@@ -56,7 +56,6 @@ def sort_queue_at(selected_queue):
 
 
 def get_process_from_queue(selected_queue, selected_process):
-    print(selected_queue.size)
     for i in range(selected_queue.size):
         if selected_queue.array[i].process_id == selected_process.process_id:
             return selected_queue.array[i]

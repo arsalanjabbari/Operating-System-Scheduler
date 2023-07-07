@@ -364,14 +364,13 @@ def SRTF_scheduling_algorithm(job_queue):
 
 
 def MLFQ_scheduling_algorithm(job_queue):
-
     create_directory("./output/MLFQ")
     algorithm_procedure_output_file = create_file("./output/MLFQ/", "MLFQ - Algorithm Procedure", ".log")
     algorithm_analysis_output_file = create_file("./output/MLFQ/", "MLFQ - Algorithm Analysis", ".log")
     processes_analysis_output_file = create_file("./output/MLFQ/", "MLFQ - Processes Analysis", ".log")
 
     job_queue_copy = copy_queue(job_queue)
-    ready_queue = Queue(job_queue.capacity)
+    ready_queues = []  # List to hold multiple queues
     running_process = None
     waiting_queue = Queue(job_queue.capacity)
     terminated_queue = Queue(job_queue.capacity)
@@ -381,61 +380,59 @@ def MLFQ_scheduling_algorithm(job_queue):
     process_previous_running_level = 1
 
     algorithm_procedure_output_file.write(
-        "*** Multi-Level-Feedback-Queue (MLFQ) Scheduling Algorithm in Operating System "
-        "***\n\n")
+        "*** Multi-Level-Feedback-Queue (MLFQ) Scheduling Algorithm in Operating System ***\n\n")
 
-    number_of_queues = int(input("How many Queue you want for your scheduling: "))
-    queues_quantum = [0] * number_of_queues
-    for i in range(1, number_of_queues + 1):
-        temp_time_quantum = int(input(f"Enter quantum-time for Queue number {i}"))
-        queues_quantum[i] = temp_time_quantum
+    # Ask user for the number of queues and quantum time for each queue
+    num_queues = int(input("Enter the number of queues: "))
+    quantum_times = []
+    for i in range(num_queues):
+        quantum_time = int(input("Enter the quantum time for Queue {}: ".format(i+1)))
+        quantum_times.append(quantum_time)
+        ready_queues.append(Queue(job_queue.capacity))
 
     while not is_full(terminated_queue):
         algorithm_procedure_output_file.write("Time = {}-{}:\n".format(current_time, current_time + 1))
 
         if not is_empty(job_queue) and front(job_queue).arrival_time <= current_time:
-            enqueue(ready_queue, dequeue(job_queue))
+            enqueue(ready_queues[0], dequeue(job_queue))
             algorithm_procedure_output_file.write(
-                "\tProcess-{} Moved From Job-Queue to Ready-Queue Level 1.\n".format(rear(ready_queue).process_id))
+                "\tProcess-{} Moved From Job-Queue to Ready-Queue Level 1.\n".format(rear(ready_queues[0]).process_id))
 
-        if not is_empty(ready_queue) and running_process is None:
-            running_process = dequeue(ready_queue)
+        if not is_empty(ready_queues[0]) and running_process is None:
+            running_process = dequeue(ready_queues[0])
             process_previous_running_level = 1
             temp_elapsed_time = 0
             if running_process.response_time == -1:
                 running_process.response_time = current_time
             algorithm_procedure_output_file.write(
                 "\tProcess-{} Moved From Ready-Queue Level 1 to Running-State.\n".format(running_process.process_id))
-        elif not is_empty(ready_queue_level_2) and running_process is None:
-            running_process = dequeue(ready_queue_level_2)
-            process_previous_running_level = 2
-            temp_elapsed_time = 0
-            if running_process.response_time == -1:
-                running_process.response_time = current_time
-            algorithm_procedure_output_file.write(
-                "\tProcess-{} Moved From Ready-Queue Level 2 to Running-State.\n".format(running_process.process_id))
-        elif not is_empty(ready_queue_level_3) and running_process is None:
-            running_process = dequeue(ready_queue_level_3)
-            process_previous_running_level = 3
-            temp_elapsed_time = 0
-            if running_process.response_time == -1:
-                running_process.response_time = current_time
-            algorithm_procedure_output_file.write(
-                "\tProcess-{} Moved From Ready-Queue Level 3 to Running-State.\n".format(running_process.process_id))
+        else:
+            for i in range(1, num_queues):
+                if not is_empty(ready_queues[i]) and running_process is None:
+                    running_process = dequeue(ready_queues[i])
+                    process_previous_running_level = i+1
+                    temp_elapsed_time = 0
+                    if running_process.response_time == -1:
+                        running_process.response_time = current_time
+                    algorithm_procedure_output_file.write(
+                        "\tProcess-{} Moved From Ready-Queue Level {} to Running-State.\n".format(
+                            running_process.process_id, i+1))
+                    break
 
         if not is_empty(waiting_queue):
             front(waiting_queue).IO_burst_time -= 1
             algorithm_procedure_output_file.write(
-                "\tProcess-{}'s Waited for I/O Recourse for 1 Second (Remaining I/O Waiting Time = {}).\n".format(
+                "\tProcess-{}'s Waited for I/O Resource for 1 Second (Remaining I/O Waiting Time = {}).\n".format(
                     front(waiting_queue).process_id, front(waiting_queue).IO_burst_time))
 
             if front(waiting_queue).IO_burst_time == 0:
-                enqueue(ready_queue, dequeue(waiting_queue))
+                enqueue(ready_queues[0], dequeue(waiting_queue))
                 algorithm_procedure_output_file.write(
                     "\tProcess-{}'s IO's Waiting Time Was Finished and Was Moved From Waiting-Queue to Ready-Queue.\n".format(
-                        rear(ready_queue).process_id))
+                        rear(ready_queues[0]).process_id))
 
         if running_process is not None:
+            queue_index = process_previous_running_level - 1  # Index of the queue from which process was dequeued
             if running_process.CPU_burst_time_1 == 0:
                 if running_process.IO_burst_time == 0 and running_process.CPU_burst_time_2 != 0:
                     running_process.CPU_burst_time_2 -= 1
@@ -454,18 +451,19 @@ def MLFQ_scheduling_algorithm(job_queue):
                         algorithm_procedure_output_file.write(
                             "\tProcess-{} Was Terminated (Moved From Running-State to Terminated-Queue).\n".format(
                                 rear(terminated_queue).process_id))
-                    elif process_previous_running_level == 1 and temp_elapsed_time == time_quantum_level_1:
-                        enqueue(ready_queue_level_2, running_process)
-                        running_process = None
-                        algorithm_procedure_output_file.write(
-                            "\tProcess-{} Was Preempted (Moved From Running-State to Ready-Queue Level 2).\n".format(
-                                rear(ready_queue_level_2).process_id))
-                    elif process_previous_running_level == 2 and temp_elapsed_time == time_quantum_level_2:
-                        enqueue(ready_queue_level_3, running_process)
-                        temp_elapsed_time = 0
-                        algorithm_procedure_output_file.write(
-                            "\tProcess-{} Was Preempted (Moved From Running-State to Ready-Queue Level 3).\n".format(
-                                rear(ready_queue_level_3).process_id))
+                    elif temp_elapsed_time == quantum_times[queue_index]:
+                        if queue_index + 1 < num_queues:
+                            enqueue(ready_queues[queue_index + 1], running_process)
+                            running_process = None
+                            algorithm_procedure_output_file.write(
+                                "\tProcess-{} Was Preempted (Moved From Running-State to Ready-Queue Level {}).\n".format(
+                                    rear(ready_queues[queue_index + 1]).process_id, queue_index + 2))
+                        else:
+                            enqueue(ready_queues[queue_index], running_process)
+                            running_process = None
+                            algorithm_procedure_output_file.write(
+                                "\tProcess-{} Time Slice Expired (Moved From Running-State to the Same Ready-Queue Level).\n".format(
+                                    rear(ready_queues[queue_index]).process_id))
             else:
                 running_process.CPU_burst_time_1 -= 1
                 temp_elapsed_time += 1
@@ -479,18 +477,19 @@ def MLFQ_scheduling_algorithm(job_queue):
                     algorithm_procedure_output_file.write(
                         "\tProcess-{} Moved From Running-State to Waiting-Queue to Execute Its IO Burst.\n".format(
                             rear(waiting_queue).process_id))
-                elif process_previous_running_level == 1 and temp_elapsed_time == time_quantum_level_1:
-                    enqueue(ready_queue_level_2, running_process)
-                    running_process = None
-                    algorithm_procedure_output_file.write(
-                        "\tProcess-{} Was Preempted (Moved From Running-State to Ready-Queue Level 2).\n".format(
-                            rear(ready_queue_level_2).process_id))
-                elif process_previous_running_level == 2 and temp_elapsed_time == time_quantum_level_2:
-                    enqueue(ready_queue_level_3, running_process)
-                    running_process = None
-                    algorithm_procedure_output_file.write(
-                        "\tProcess-{} Was Preempted (Moved From Running-State to Ready-Queue Level 3).\n".format(
-                            rear(ready_queue_level_3).process_id))
+                elif temp_elapsed_time == quantum_times[queue_index]:
+                    if queue_index + 1 < num_queues:
+                        enqueue(ready_queues[queue_index + 1], running_process)
+                        running_process = None
+                        algorithm_procedure_output_file.write(
+                            "\tProcess-{} Was Preempted (Moved From Running-State to Ready-Queue Level {}).\n".format(
+                                rear(ready_queues[queue_index + 1]).process_id, queue_index + 2))
+                    else:
+                        enqueue(ready_queues[queue_index], running_process)
+                        running_process = None
+                        algorithm_procedure_output_file.write(
+                            "\tProcess-{} Time Slice Expired (Moved From Running-State to the Same Ready-Queue Level).\n".format(
+                                rear(ready_queues[queue_index]).process_id))
 
         current_time += 1
 
@@ -514,9 +513,41 @@ def HRRN_scheduling_algorithm(job_queue):
     waiting_queue = Queue(job_queue.capacity)
     terminated_queue = Queue(job_queue.capacity)
 
-    #
-    #
-    #
+    current_time = 0
+
+    algorithm_procedure_output_file.write("*** Highest Response Ratio Next (HRRN) Scheduling Algorithm in Operating System ***\n\n")
+
+    while not is_full(terminated_queue):
+        algorithm_procedure_output_file.write("Time = {}-{}:\n".format(current_time, current_time + 1))
+
+        if not is_empty(job_queue) and front(job_queue).arrival_time <= current_time:
+            enqueue(ready_queue, dequeue(job_queue))
+            algorithm_procedure_output_file.write("\tProcess-{} Moved From Job-Queue to Ready-Queue.\n".format(rear(ready_queue).process_id))
+
+        if running_process is None and not is_empty(ready_queue):
+            highest_response_ratio = -1
+            for process in ready_queue.array:
+                wait_time = current_time - process.arrival_time
+                response_ratio = (wait_time + process.burst_time) / process.burst_time
+                if response_ratio > highest_response_ratio:
+                    highest_response_ratio = response_ratio
+                    running_process = process
+            if running_process.response_time == -1:
+                running_process.response_time = current_time
+            algorithm_procedure_output_file.write("\tProcess-{} Moved From Ready-Queue to Running-State.\n".format(running_process.process_id))
+            remove_process(ready_queue, running_process)
+
+        if running_process is not None:
+            running_process.burst_time -= 1
+            if running_process.burst_time == 0:
+                enqueue(terminated_queue, running_process)
+                running_process.termination_time = current_time + 1
+                running_process.turn_around_time = running_process.termination_time - running_process.arrival_time
+                running_process.waiting_time = running_process.turn_around_time - running_process.original_burst_time
+                algorithm_procedure_output_file.write("\tProcess-{} Was Terminated (Moved From Running-State to Terminated-Queue).\n".format(rear(terminated_queue).process_id))
+                running_process = None
+
+        current_time += 1
 
     algorithm_procedure_output_file.close()
     analyze_algorithm(job_queue_copy, terminated_queue, algorithm_analysis_output_file)
