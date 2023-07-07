@@ -1,28 +1,14 @@
 from Queue import *
-from Process import *
-
 
 def get_process_turnaround_time(selected_process):
     return selected_process.termination_time - selected_process.arrival_time
 
-
-#
-# def get_process_waiting_time(selected_process, job_queue):
-#
-#     queue_process = get_process_from_queue(selected_process, job_queue)
-#
-#     return get_process_turnaround_time(process) - (queue_process.CPU_burst_time_1 + queue_process.IO_burst_time +
-#
-#                                                    queue_process.CPU_burst_time_2)
-
 def get_process_waiting_time(selected_process, job_queue):
-    return get_process_turnaround_time(selected_process) - (
-                get_process_from_queue(job_queue, selected_process).CPU_burst_time_1 +
-                get_process_from_queue(job_queue, selected_process).IO_burst_time +
-                get_process_from_queue(job_queue, selected_process).CPU_burst_time_2)
+    tat = get_process_turnaround_time(selected_process)
+    process_temp = project_process_from_queue(job_queue, selected_process)
+    return tat - (process_temp.CPU_burst_time_1 + process_temp.IO_burst_time + process_temp.CPU_burst_time_2)
 
-
-def analyze_processes(job_queue, terminated_queue, output_file):
+def analyze_processes_of_queue(job_queue, terminated_queue, output_file):
     for i in range(terminated_queue.size):
         selected_process = terminated_queue.array[i]
         output_file.write(f"Process {selected_process.process_id}:\n")
