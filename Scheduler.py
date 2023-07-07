@@ -308,17 +308,13 @@ def SRTF_scheduling_algorithm(job_queue):
                         running_process.process_id, running_process.CPU_burst_time_1))
 
                 if running_process.CPU_burst_time_1 == 0 and running_process.IO_burst_time != 0:
-                    enqueue(waiting_queue, running_process)
+                    IO_req_report = IO_request(waiting_queue, running_process)
                     running_process = None
-                    algorithm_procedure_output_file.write(
-                        "\tProcess-{} Moved From Running-State to Waiting-Queue to Execute Its IO Burst.\n".format(
-                            rear(waiting_queue).process_id))
+                    algorithm_procedure_output_file.write(IO_req_report)
                 else:
-                    enqueue(ready_queue, running_process)
+                    preempt_report = preempt(ready_queue, running_process)
                     running_process = None
-                    algorithm_procedure_output_file.write(
-                        "\tProcess-{} Was Preempted (Moved From Running-State to Ready-Queue).\n".format(
-                            rear(ready_queue).process_id))
+                    algorithm_procedure_output_file.write(preempt_report)
 
         current_time += 1
 
