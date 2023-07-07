@@ -54,7 +54,7 @@ def analyze_algorithm_on_the_queue(job_queue, terminated_queue, output_file):
     average_waiting_time = get_average_waiting_time(terminated_queue, job_queue)
     average_response_time = get_average_response_time(terminated_queue)
 
-    output_file.write("*****\nAlgorithm Analysis:")
+    output_file.write("*****\nAlgorithm Analysis:\n")
     output_file.write(f"*\nCPU execution time: {CPU_execution_time}\n")
     output_file.write(f"*\nCPU idle time: {CPU_idle_time}\n")
     output_file.write(f"*\nCPU utilization: {CPU_utilization:.2f}%\n")

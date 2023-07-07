@@ -29,10 +29,10 @@ def IO_request(waiting_queue, running_process):
 
 
 def IO_completion(waiting_queue, ready_queue):
-    enqueue(ready_queue, dequeue(waiting_queue))
+    temp = dequeue(waiting_queue)
+    enqueue(ready_queue, temp)
     return "\tProcess-{}'s I/O Waiting Time Was Finished and Was Moved From" \
-           " Waiting-Queue to Ready-Queue.\n".format(rear(ready_queues[0]).process_id)
-
+           " Waiting-Queue to Ready-Queue.\n".format(temp.process_id)
 
 def terminate(running_process, terminated_queue, current_time):
     enqueue(terminated_queue, running_process)
