@@ -34,6 +34,7 @@ def IO_completion(waiting_queue, ready_queue):
     return "\tProcess-{}'s I/O Waiting Time Was Finished and Was Moved From" \
            " Waiting-Queue to Ready-Queue.\n".format(temp.process_id)
 
+
 def terminate(running_process, terminated_queue, current_time):
     enqueue(terminated_queue, running_process)
     running_process.termination_time = current_time + 1
