@@ -3,6 +3,38 @@ from Process_Analyze import analyze_processes_of_queue
 from Queue import *
 from Test_Section import create_directory, create_file
 
+def admit(job_queue, ready_queue):
+    enqueue(ready_queue, dequeue(job_queue))
+    report_text = "\tProcess-{} Moved From Job-Queue to Ready-Queue.\n".format(rear(ready_queue).process_id)
+    return report_text
+
+def dispatch(running_process, current_time):
+    if running_process.response_time == -1:
+        running_process.response_time = current_time
+    return "\tProcess-{} Moved From Ready-Queue to Running-State.\n".format(running_process.process_id)
+
+def preempt():
+
+def IO_request(waiting_queue, running_process):
+    enqueue(waiting_queue, running_process)
+    return f"\tProcess-{rear(waiting_queue).process_id} Moved From Running-State to Waiting-Queue to" \
+           f" Execute Its IO Burst.\n"
+
+def IO_completion(waiting_queue, ready_queue):
+    enqueue(ready_queue, dequeue(waiting_queue))
+    return "\tProcess-{}'s I/O Waiting Time Was Finished and Was Moved From"\
+           " Waiting-Queue to Ready-Queue.\n"
+=
+def terminate(running_process, terminated_queue, current_time):
+    running_process.termination_time = current_time + 1
+    running_process.turn_around_time = running_process.termination_time - (
+        running_process.arrival_time)
+    running_process.waiting_time = running_process.turn_around_time - (
+            running_process.CPU_burst_time_1 + running_process.IO_burst_time
+            + running_process.CPU_burst_time_2)
+    return f"\tProcess-{rear(terminated_queue).process_id} Was Terminated " \
+           f"(Moved From Running-State to Terminated-Queue).\n"
+
 def FCFS_scheduling_algorithm(job_queue):
     create_directory("./output/FCFS")
     algorithm_procedure_output_file = create_file("./output/FCFS/", "FCFS - Scheduling Timeline Flow", ".log")
@@ -14,37 +46,28 @@ def FCFS_scheduling_algorithm(job_queue):
     running_process = None
     waiting_queue = Queue(job_queue.capacity)
     terminated_queue = Queue(job_queue.capacity)
-
     current_time = 0
     algorithm_procedure_output_file.write("***"
                                           " First Come, First Served (FCFS) Scheduling Algorithm in Operating System "
                                           "***\n\n")
+
     while not is_full(terminated_queue):
         algorithm_procedure_output_file.write(f"Time = {current_time}-{current_time + 1}:\n")
-
         if not is_empty(job_queue) and (front(job_queue).arrival_time <= current_time):
-            enqueue(ready_queue, dequeue(job_queue))
-            algorithm_procedure_output_file.write("\tProcess-{} Moved From Job-Queue to Ready-Queue."
-                                                  "\n".format(rear(ready_queue).process_id))
-
+            admit_report = admit(job_queue, ready_queue)
+            algorithm_procedure_output_file.write(admit_report)
         if not is_empty(ready_queue) and running_process is None:
             running_process = dequeue(ready_queue)
-            if running_process.response_time == -1:
-                running_process.response_time = current_time
-            algorithm_procedure_output_file.write("\tProcess-{} Moved From Ready-Queue to Running-State.\n"
-                                                  .format(running_process.process_id))
-
+            dispatch_report = dispatch(running_process, current_time)
+            algorithm_procedure_output_file.write(dispatch_report)
         if not is_empty(waiting_queue):
             front(waiting_queue).IO_burst_time -= 1
             algorithm_procedure_output_file.write("\tProcess-{}'s Waited for I/O Resource for 1 Second (Remaining I/O"
                                                   " Waiting Time = {}).\n".format(front(waiting_queue).process_id,
                                                                                   front(waiting_queue).IO_burst_time))
             if front(waiting_queue).IO_burst_time == 0:
-                enqueue(ready_queue, dequeue(waiting_queue))
-                algorithm_procedure_output_file.write("\tProcess-{}'s I/O Waiting Time Was Finished and Was Moved From"
-                                                      " Waiting-Queue to Ready-Queue.\n"
-                                                      .format(rear(ready_queue).process_id))
-
+                IO_comp_report = IO_completion(waiting_queue, ready_queue)
+                algorithm_procedure_output_file.write(IO_comp_report)
         if running_process is not None:
             if running_process.CPU_burst_time_1 == 0:
                 if running_process.IO_burst_time == 0 and running_process.CPU_burst_time_2 != 0:
@@ -54,35 +77,23 @@ def FCFS_scheduling_algorithm(job_queue):
                         f" (Remaining Second CPU Burst Time = {running_process.CPU_burst_time_2}).\n")
                     if running_process.CPU_burst_time_2 == 0:
                         enqueue(terminated_queue, running_process)
-                        running_process.termination_time = current_time + 1
-                        running_process.turn_around_time = running_process.termination_time - (
-                            running_process.arrival_time)
-                        running_process.waiting_time = running_process.turn_around_time - (
-                                running_process.CPU_burst_time_1 + running_process.IO_burst_time
-                                + running_process.CPU_burst_time_2)
+                        terminate_report = terminate(running_process, terminated_queue, current_time)
                         running_process = None
-                        algorithm_procedure_output_file.write(
-                            f"\tProcess-{rear(terminated_queue).process_id} Was Terminated"
-                            f" (Moved From Running-State to Terminated-Queue).\n")
+                        algorithm_procedure_output_file.write(terminate_report)
             else:
                 running_process.CPU_burst_time_1 -= 1
                 algorithm_procedure_output_file.write(
                     f"\tProcess-{running_process.process_id}'s First CPU Burst Was Executed for 1 Second "
                     f"(Remaining First CPU Burst Time = {running_process.CPU_burst_time_1}).\n")
                 if running_process.CPU_burst_time_1 == 0 and running_process.IO_burst_time != 0:
-                    enqueue(waiting_queue, running_process)
+                    IO_req_report = IO_request(waiting_queue, running_process)
                     running_process = None
-                    algorithm_procedure_output_file.write(
-                        f"\tProcess-{rear(waiting_queue).process_id} Moved From Running-State to Waiting-Queue to"
-                        f" Execute Its IO Burst.\n")
-
+                    algorithm_procedure_output_file.write(IO_req_report)
         current_time += 1
 
     algorithm_procedure_output_file.close()
-
     analyze_algorithm_on_the_queue(job_queue_copy, terminated_queue, algorithm_analysis_output_file)
     analyze_processes_of_queue(job_queue_copy, terminated_queue, processes_analysis_output_file)
-
     algorithm_analysis_output_file.close()
     processes_analysis_output_file.close()
 
@@ -110,19 +121,12 @@ def RR_scheduling_algorithm(job_queue):
         algorithm_procedure_output_file.write("Time = {}-{}:\n".format(current_time, current_time + 1))
 
         if not is_empty(job_queue) and front(job_queue).arrival_time <= current_time:
-            enqueue(ready_queue, dequeue(job_queue))
-            algorithm_procedure_output_file.write(
-                "\tProcess-{} Moved From Job-Queue to Ready-Queue.\n".format(rear(ready_queue).process_id))
-
+            admit_report = admit(job_queue, ready_queue)
+            algorithm_procedure_output_file.write(admit_report)
         if not is_empty(ready_queue) and running_process is None:
-            # Move the process from the ready queue to the running state
             running_process = dequeue(ready_queue)
-            execution_elapsed_time = 0
-            if running_process.response_time == -1:
-                running_process.response_time = current_time
-            algorithm_procedure_output_file.write(
-                "\tProcess-{} Moved From Ready-Queue to Running-State.\n".format(running_process.process_id))
-
+            dispatch_report = dispatch(running_process, current_time)
+            algorithm_procedure_output_file.write(dispatch_report)
         if not is_empty(waiting_queue):
             front(waiting_queue).IO_burst_time -= 1
             algorithm_procedure_output_file.write(
@@ -130,11 +134,8 @@ def RR_scheduling_algorithm(job_queue):
                     front(waiting_queue).process_id, front(waiting_queue).IO_burst_time))
 
             if front(waiting_queue).IO_burst_time == 0:
-                enqueue(ready_queue, dequeue(waiting_queue))
-                algorithm_procedure_output_file.write(
-                    "\tProcess-{}'s IO's Waiting Time Was Finished and Was Moved From Waiting-Queue to Ready-Queue."
-                    "\n".format(rear(ready_queue).process_id))
-
+                IO_comp_report = IO_completion(waiting_queue, ready_queue)
+                algorithm_procedure_output_file.write(IO_comp_report)
         if running_process is not None:
             if running_process.CPU_burst_time_1 == 0:
                 if running_process.IO_burst_time == 0 and running_process.CPU_burst_time_2 != 0:
@@ -216,10 +217,8 @@ def SPN_scheduling_algorithm(job_queue):
         algorithm_procedure_output_file.write("Time = {}-{}:\n".format(current_time, current_time + 1))
 
         if not is_empty(job_queue) and front(job_queue).arrival_time <= current_time:
-            enqueue(ready_queue, dequeue(job_queue))
-            algorithm_procedure_output_file.write(
-                "\tProcess-{} Moved From Job-Queue to Ready-Queue.\n".format(rear(ready_queue).process_id))
-
+            admit_report = admit(job_queue, ready_queue)
+            algorithm_procedure_output_file.write(admit_report)
         if not is_empty(ready_queue) and running_process is None:
             running_process = remove_process_with_minimum_CPU_burst_time(ready_queue)
             if running_process.response_time == -1:
@@ -305,10 +304,8 @@ def SRTF_scheduling_algorithm(job_queue):
         algorithm_procedure_output_file.write("Time = {}-{}:\n".format(current_time, current_time + 1))
 
         if not is_empty(job_queue) and front(job_queue).arrival_time <= current_time:
-            enqueue(ready_queue, dequeue(job_queue))
-            algorithm_procedure_output_file.write(
-                "\tProcess-{} Moved From Job-Queue to Ready-Queue.\n".format(rear(ready_queue).process_id))
-
+            admit_report = admit(job_queue, ready_queue)
+            algorithm_procedure_output_file.write(admit_report)
         if not is_empty(ready_queue) and running_process is None:
             running_process = remove_process_with_minimum_CPU_burst_time(ready_queue)
             if running_process.response_time == -1:
@@ -553,10 +550,8 @@ def HRRN_scheduling_algorithm(job_queue):
         algorithm_procedure_output_file.write("Time = {}-{}:\n".format(current_time, current_time + 1))
 
         if not is_empty(job_queue) and front(job_queue).arrival_time <= current_time:
-            enqueue(ready_queue, dequeue(job_queue))
-            algorithm_procedure_output_file.write("\tProcess-{} Moved From Job-Queue to Ready-Queue."
-                                                  "\n".format(rear(ready_queue).process_id))
-
+            admit_report = admit(job_queue, ready_queue)
+            algorithm_procedure_output_file.write(admit_report)
         if running_process is None and not is_empty(ready_queue):
             highest_response_ratio = -1
             for process in ready_queue.array:
