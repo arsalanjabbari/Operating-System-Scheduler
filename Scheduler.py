@@ -336,7 +336,6 @@ def MLFQ_scheduling_algorithm(job_queue):
     running_process = None
     waiting_queue = Queue(job_queue.capacity)
     terminated_queue = Queue(job_queue.capacity)
-
     current_time = 0
     temp_elapsed_time = 0
     process_previous_running_level = 1
@@ -354,20 +353,15 @@ def MLFQ_scheduling_algorithm(job_queue):
 
     while not is_full(terminated_queue):
         algorithm_procedure_output_file.write("Time = {}-{}:\n".format(current_time, current_time + 1))
-
         if not is_empty(job_queue) and front(job_queue).arrival_time <= current_time:
-            enqueue(ready_queues[0], dequeue(job_queue))
-            algorithm_procedure_output_file.write(
-                "\tProcess-{} Moved From Job-Queue to Ready-Queue Level 1.\n".format(rear(ready_queues[0]).process_id))
-
+            admit_report = admit(job_queue, ready_queues[0])
+            algorithm_procedure_output_file.write(admit_report)
         if not is_empty(ready_queues[0]) and running_process is None:
             running_process = dequeue(ready_queues[0])
             process_previous_running_level = 1
             temp_elapsed_time = 0
-            if running_process.response_time == -1:
-                running_process.response_time = current_time
-            algorithm_procedure_output_file.write(
-                "\tProcess-{} Moved From Ready-Queue Level 1 to Running-State.\n".format(running_process.process_id))
+            dispatch_report = dispatch(running_process, current_time)
+            algorithm_procedure_output_file.write(dispatch_report)
         else:
             for i in range(1, num_queues):
                 if not is_empty(ready_queues[i]) and running_process is None:
@@ -412,7 +406,7 @@ def MLFQ_scheduling_algorithm(job_queue):
                             running_process.arrival_time)
                         running_process.waiting_time = running_process.turn_around_time - (
                                 running_process.CPU_burst_time_1 + running_process.IO_burst_time + (
-                            running_process.CPU_burst_time_2))
+                                    running_process.CPU_burst_time_2))
                         running_process = None
                         algorithm_procedure_output_file.write(
                             "\tProcess-{} Was Terminated (Moved From Running-State to Terminated-Queue).\n".format(
