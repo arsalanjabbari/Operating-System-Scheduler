@@ -12,6 +12,7 @@ def create_file(path, name, extension):
 def create_directory(path):
     os.makedirs(path, exist_ok=True)
 
+
 def count_lines_in_CSV_file(path):
     try:
         with open(path, 'r') as file:

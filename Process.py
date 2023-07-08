@@ -9,6 +9,7 @@ class Process:
         self.turn_around_time = -1
         self.waiting_time = -1
         self.termination_time = -1
+        self.priority_number = -1
 
 def print_process(selected_process):
     print(f"Process ID: {selected_process.process_id} |"
@@ -32,3 +33,22 @@ def copy_process(selected_process):
     new_process.waiting_time = selected_process.waiting_time
     new_process.termination_time = selected_process.termination_time
     return new_process
+
+def process_priority_number(selected_process):
+    waiting_time = get_process_waiting_time(selected_process)
+    service_time = selected_process.CPU_burst_time_1
+    service_time += selected_process.CPU_burst_time_2
+    priority_number = waiting_time/service_time
+    selected_process.priority_number = priority_number
+    return priority_number
+
+def get_process_turnaround_time(selected_process):
+    tat = selected_process.termination_time - selected_process.arrival_time
+    selected_process.turn_around_time = tat
+    return tat
+
+def get_process_waiting_time(selected_process):
+    tat = get_process_turnaround_time(selected_process)
+    wt = tat - (selected_process.CPU_burst_time_1 + selected_process.IO_burst_time + selected_process.CPU_burst_time_2)
+    selected_process.waiting_time = wt
+    return wt

@@ -83,6 +83,13 @@ def get_process_with_minimum_CPU_burst_time(selected_queue):
             wanted_process = selected_queue.array[i]
     return wanted_process
 
+def get_process_with_highest_priority(selected_queue):
+    pass
+    # wanted_process = selected_queue.array[0]
+    # wanted_process_r = process_priority_number(wanted_process)
+    # for i in range(1, selected_queue.size):
+    #     if wanted_process.
+
 def remove_process_with_minimum_CPU_burst_time(selected_queue):
     wanted_process = get_process_with_minimum_CPU_burst_time(selected_queue)
     remove_process_from_queue(selected_queue, wanted_process)

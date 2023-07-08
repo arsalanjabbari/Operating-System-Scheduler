@@ -104,7 +104,7 @@ def FCFS_scheduling_algorithm(job_queue):
 
     algorithm_procedure_output_file.close()
     analyze_algorithm_on_the_queue(job_queue_copy, terminated_queue, algorithm_analysis_output_file)
-    analyze_processes_of_queue(job_queue_copy, terminated_queue, processes_analysis_output_file)
+    analyze_processes_of_queue(terminated_queue, processes_analysis_output_file)
     algorithm_analysis_output_file.close()
     processes_analysis_output_file.close()
 
@@ -181,7 +181,7 @@ def RR_scheduling_algorithm(job_queue):
 
     algorithm_procedure_output_file.close()
     analyze_algorithm_on_the_queue(job_queue_copy, terminated_queue, algorithm_analysis_output_file)
-    analyze_processes_of_queue(job_queue_copy, terminated_queue, processes_analysis_output_file)
+    analyze_processes_of_queue(terminated_queue, processes_analysis_output_file)
     algorithm_analysis_output_file.close()
     processes_analysis_output_file.close()
 
@@ -244,7 +244,7 @@ def SPN_scheduling_algorithm(job_queue):
 
     algorithm_procedure_output_file.close()
     analyze_algorithm_on_the_queue(job_queue_copy, terminated_queue, algorithm_analysis_output_file)
-    analyze_processes_of_queue(job_queue_copy, terminated_queue, processes_analysis_output_file)
+    analyze_processes_of_queue(terminated_queue, processes_analysis_output_file)
     algorithm_analysis_output_file.close()
     processes_analysis_output_file.close()
 
@@ -320,7 +320,7 @@ def SRTF_scheduling_algorithm(job_queue):
 
     algorithm_procedure_output_file.close()
     analyze_algorithm_on_the_queue(job_queue_copy, terminated_queue, algorithm_analysis_output_file)
-    analyze_processes_of_queue(job_queue_copy, terminated_queue, processes_analysis_output_file)
+    analyze_processes_of_queue(terminated_queue, processes_analysis_output_file)
     algorithm_analysis_output_file.close()
     processes_analysis_output_file.close()
 
@@ -459,7 +459,7 @@ def MLFQ_scheduling_algorithm(job_queue):
 
     algorithm_procedure_output_file.close()
     analyze_algorithm_on_the_queue(job_queue_copy, terminated_queue, algorithm_analysis_output_file)
-    analyze_processes_of_queue(job_queue_copy, terminated_queue, processes_analysis_output_file)
+    analyze_processes_of_queue(terminated_queue, processes_analysis_output_file)
     algorithm_analysis_output_file.close()
     processes_analysis_output_file.close()
 
@@ -475,49 +475,53 @@ def HRRN_scheduling_algorithm(job_queue):
     running_process = None
     waiting_queue = Queue(job_queue.capacity)
     terminated_queue = Queue(job_queue.capacity)
-
     current_time = 0
-
-    algorithm_procedure_output_file.write("*** "
-                                          "Highest Response Ratio Next (HRRN) Scheduling Algorithm in Operating System"
-                                          " ***\n\n")
+    algorithm_procedure_output_file.write(
+        "*** Highest-Response-Ratio-Next (HRRN) Scheduling Algorithm in Operating System ***\n\n")
 
     while not is_full(terminated_queue):
         algorithm_procedure_output_file.write("Time = {}-{}:\n".format(current_time, current_time + 1))
-
         if not is_empty(job_queue) and front(job_queue).arrival_time <= current_time:
             admit_report = admit(job_queue, ready_queue)
             algorithm_procedure_output_file.write(admit_report)
-        if running_process is None and not is_empty(ready_queue):
-            highest_response_ratio = -1
-            for process in ready_queue.array:
-                wait_time = current_time - process.arrival_time
-                response_ratio = (wait_time + process.burst_time) / process.burst_time
-                if response_ratio > highest_response_ratio:
-                    highest_response_ratio = response_ratio
-                    running_process = process
-            if running_process.response_time == -1:
-                running_process.response_time = current_time
-            algorithm_procedure_output_file.write("\tProcess-{} Moved From Ready-Queue to Running-State."
-                                                  "\n".format(running_process.process_id))
-            remove_process_from_queue(ready_queue, running_process)
-
+        if not is_empty(ready_queue) and running_process is None:
+            running_process = remove_process_with_minimum_CPU_burst_time(ready_queue)
+            dispatch_report = dispatch(running_process, current_time)
+            algorithm_procedure_output_file.write(dispatch_report)
+        if not is_empty(waiting_queue):
+            front(waiting_queue).IO_burst_time -= 1
+            algorithm_procedure_output_file.write(
+                "\tProcess-{}'s Waited for I/O Resource for 1 Second (Remaining I/O Waiting Time = {}).\n".format(
+                    front(waiting_queue).process_id, front(waiting_queue).IO_burst_time))
+            if front(waiting_queue).IO_burst_time == 0:
+                IO_comp_report = IO_completion(waiting_queue, ready_queue)
+                algorithm_procedure_output_file.write(IO_comp_report)
         if running_process is not None:
-            running_process.burst_time -= 1
-            if running_process.burst_time == 0:
-                enqueue(terminated_queue, running_process)
-                running_process.termination_time = current_time + 1
-                running_process.turn_around_time = running_process.termination_time - running_process.arrival_time
-                running_process.waiting_time = running_process.turn_around_time - running_process.original_burst_time
-                algorithm_procedure_output_file.write("\tProcess-{} Was Terminated "
-                                                      "(Moved From Running-State to Terminated-Queue)."
-                                                      "\n".format(rear(terminated_queue).process_id))
-                running_process = None
-
+            if running_process.CPU_burst_time_1 == 0:
+                if running_process.IO_burst_time == 0 and running_process.CPU_burst_time_2 != 0:
+                    running_process.CPU_burst_time_2 -= 1
+                    algorithm_procedure_output_file.write(
+                        "\tProcess-{}'s Second CPU Burst Was Executed for 1 Second "
+                        "(Remaining Second CPU Burst Time = {}).\n".format(running_process.process_id,
+                                                                           running_process.CPU_burst_time_2))
+                    if running_process.CPU_burst_time_2 == 0:
+                        terminate_report = terminate(running_process, terminated_queue, current_time)
+                        running_process = None
+                        algorithm_procedure_output_file.write(terminate_report)
+            else:
+                running_process.CPU_burst_time_1 -= 1
+                algorithm_procedure_output_file.write(
+                    "\tProcess-{}'s First CPU Burst Was Executed for 1 Second (Remaining First CPU Burst Time = {})."
+                    "\n".format(
+                        running_process.process_id, running_process.CPU_burst_time_1))
+                if running_process.CPU_burst_time_1 == 0 and running_process.IO_burst_time != 0:
+                    IO_req_report = IO_request(waiting_queue, running_process)
+                    running_process = None
+                    algorithm_procedure_output_file.write(IO_req_report)
         current_time += 1
 
     algorithm_procedure_output_file.close()
     analyze_algorithm_on_the_queue(job_queue_copy, terminated_queue, algorithm_analysis_output_file)
-    analyze_processes_of_queue(job_queue_copy, terminated_queue, processes_analysis_output_file)
+    analyze_processes_of_queue(terminated_queue, processes_analysis_output_file)
     algorithm_analysis_output_file.close()
     processes_analysis_output_file.close()

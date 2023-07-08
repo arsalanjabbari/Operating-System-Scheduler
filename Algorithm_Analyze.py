@@ -33,10 +33,10 @@ def get_average_turnaround_time(terminated_queue):
         average_turnaround_time += get_process_turnaround_time(terminated_queue.array[i])
     return average_turnaround_time / terminated_queue.size
 
-def get_average_waiting_time(terminated_queue, job_queue):
+def get_average_waiting_time(terminated_queue):
     average_waiting_time = 0
     for i in range(terminated_queue.size):
-        average_waiting_time += get_process_waiting_time(terminated_queue.array[i], job_queue)
+        average_waiting_time += get_process_waiting_time(terminated_queue.array[i])
     return average_waiting_time / terminated_queue.size
 
 def get_average_response_time(terminated_queue):
@@ -51,7 +51,7 @@ def analyze_algorithm_on_the_queue(job_queue, terminated_queue, output_file):
     CPU_utilization = get_CPU_utilization_percent(job_queue, terminated_queue)
     throughput = get_throughput(terminated_queue)
     average_turnaround_time = get_average_turnaround_time(terminated_queue)
-    average_waiting_time = get_average_waiting_time(terminated_queue, job_queue)
+    average_waiting_time = get_average_waiting_time(terminated_queue)
     average_response_time = get_average_response_time(terminated_queue)
 
     output_file.write("*****\nAlgorithm Analysis:\n")
