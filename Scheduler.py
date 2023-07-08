@@ -485,7 +485,7 @@ def HRRN_scheduling_algorithm(job_queue):
             admit_report = admit(job_queue, ready_queue)
             algorithm_procedure_output_file.write(admit_report)
         if not is_empty(ready_queue) and running_process is None:
-            running_process = remove_process_with_minimum_CPU_burst_time(ready_queue)
+            running_process = remove_process_with_highest_priority(ready_queue)
             dispatch_report = dispatch(running_process, current_time)
             algorithm_procedure_output_file.write(dispatch_report)
         if not is_empty(waiting_queue):

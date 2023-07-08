@@ -1,4 +1,4 @@
-from Process import print_process, copy_process
+from Process import *
 
 class Queue:
     def __init__(self, capacity):
@@ -39,7 +39,6 @@ def rear(selected_queue):
         return None
     return selected_queue.array[selected_queue.rear]
 
-# Sort on Arrival time
 def sort_queue_at(selected_queue):
     for i in range(selected_queue.size - 1):
         for j in range(selected_queue.size - i - 1):
@@ -84,11 +83,16 @@ def get_process_with_minimum_CPU_burst_time(selected_queue):
     return wanted_process
 
 def get_process_with_highest_priority(selected_queue):
-    pass
-    # wanted_process = selected_queue.array[0]
-    # wanted_process_r = process_priority_number(wanted_process)
-    # for i in range(1, selected_queue.size):
-    #     if wanted_process.
+    wanted_process = selected_queue.array[0]
+    for i in range(1, selected_queue.size):
+        if wanted_process.priority_number < selected_queue[i].priority_number:
+            wanted_process = selected_queue.array[i]
+    return wanted_process
+
+def remove_process_with_highest_priority(selected_queue):
+    wanted_process = get_process_with_highest_priority(selected_queue)
+    remove_process_from_queue(selected_queue, wanted_process)
+    return wanted_process
 
 def remove_process_with_minimum_CPU_burst_time(selected_queue):
     wanted_process = get_process_with_minimum_CPU_burst_time(selected_queue)
