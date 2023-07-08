@@ -85,7 +85,7 @@ def get_process_with_minimum_CPU_burst_time(selected_queue):
 def get_process_with_highest_priority(selected_queue):
     wanted_process = selected_queue.array[0]
     for i in range(1, selected_queue.size):
-        if wanted_process.priority_number < selected_queue[i].priority_number:
+        if wanted_process.priority_number < selected_queue.array[i].priority_number:
             wanted_process = selected_queue.array[i]
     return wanted_process
 
