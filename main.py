@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
-from Test_Section import *
+from Scheduler_Utils import *
 from Scheduler import *
 from Queue import *
 

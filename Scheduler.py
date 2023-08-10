@@ -1,7 +1,7 @@
 from Algorithm_Analyze import analyze_algorithm_on_the_queue
 from Process_Analyze import analyze_processes_of_queue
 from Queue import *
-from Test_Section import create_directory, create_file
+from Scheduler_Utils import create_directory, create_file
 
 
 def admit(job_queue, ready_queue):
