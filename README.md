@@ -1,6 +1,5 @@
 # Operating-System-Scheduler
 
-## Description
 This repository contains a project that simulates and analyzes the process of processor timing using different algorithms in an operating system.
 
 ## Table of Contents
