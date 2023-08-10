@@ -1,6 +1,6 @@
 # Operating-System-Scheduler
 
-This repository contains a project that simulates and analyzes the process of processor timing using different algorithms in an operating system.
+The **Operating-System-Scheduler** repository hosts an advanced project that offers a comprehensive simulation and in-depth analysis of processor timing using various algorithms commonly employed in operating systems. This project delves into the heart of scheduling methodologies, providing users with a deep understanding of how different algorithms impact system performance metrics.
 
 ## Table of Contents
 - [Introduction](#introduction)
@@ -10,9 +10,41 @@ This repository contains a project that simulates and analyzes the process of pr
 - [Conclusion](#conclusion)
 
 ## Introduction
-In this project, we aim to simulate and analyze the process of processor timing through various algorithms employed in operating systems. The primary goal is to understand how different scheduling algorithms impact the performance metrics of a system.
+
+The **Operating-System-Scheduler** project adopts a scholarly approach to modern operating systems' process scheduling efficiency, providing a comprehensive platform for simulating and analyzing the interplay between processes and scheduling algorithms. Split into two phases, the project first facilitates process emulation to study diverse process behaviors and characteristics. In its second phase, it conducts a meticulous analysis of simulation outcomes, offering insights into scheduling algorithm performance under varying conditions. This project thus presents a valuable opportunity to enhance our understanding of process scheduling optimization and its implications in contemporary computing environments.
 
 ## Project Overview
+The project is divided into two main phases:
+
+### Phase 1: Simulation
+In this phase, we simulate the behavior of different scheduling algorithms using the provided `input.csv` file. The simulation generates detailed analysis of algorithm performance and individual process metrics. The simulation output is organized within the `output` directory as follows:
+```
+- /output
+  - /{Algorithm-Name}
+    - Scheduling-Timeline-Flow.log
+```
+Scheduling timeline flow, including Gantt charts.
+### Phase 2: Analysis
+In the second phase, we analyze the data generated in Phase 1. We delve into various aspects of algorithm performance, such as CPU execution time, idle time, utilization, throughput, average turnaround time, average waiting time, and average response time. Additionally, individual process metrics such as arrival time, termination time, response time, turnaround time, and waiting time are analyzed.
+``` 
+- /output
+  - /{Algorithm-Name}
+    - Algorithm-Analysis.log
+    - Process-Analysis.log
+```
+Analysis of the algorithm's performance metrics and individual process analysis.
+```
+output
+├── FCFS
+│   ├── FCFS-Algorithm-Analysis.log
+│   ├── FCFS-Process-Analysis.log
+│   └── FCFS-Scheduling-Timeline-Flow.log
+├── HRRN
+├── MLFQ
+├── RR
+├── SPN
+└── SRTF
+```
 The project includes the following components:
 - `input.csv`: Contains details of processes for analysis and simulation.
 - `Process.py`: Defines the Process class to represent individual processes.
@@ -23,7 +55,6 @@ The project includes the following components:
 - `Scheduler_Utils.py`: Provides utility functions for the scheduler.
 - `output`: Directory where simulation outputs are stored based on algorithms used.
 
-The simulation outputs are organized within the `output` directory, with subdirectories for each algorithm containing analysis logs and scheduling timeline flow logs, including Gantt charts depicting processor execution.
 
 Additionally, the project features a GUI with a user interface that prompts users to select the desired scheduling algorithm and customize parameters like the number of queues and size of each queue in the MLFQ algorithm. It also prompts for the time quantum in the RR algorithm. The implementation is designed to be fault-tolerant.
 
@@ -36,9 +67,9 @@ Additionally, the project features a GUI with a user interface that prompts user
 
 ## Getting Started
 1. Clone this repository.
-2. Ensure you have Python installed (version X.Y or higher).
+2. Ensure you have Python installed (version 3.0 or higher).
 3. Install any necessary dependencies by running: `pip install -r requirements.txt` (if applicable).
-4. Run the GUI application: `python GUI.py`.
+4. Run the application: `python3 main.py`.
 5. Follow the prompts to choose the algorithm and provide necessary inputs.
 
 ## Conclusion
